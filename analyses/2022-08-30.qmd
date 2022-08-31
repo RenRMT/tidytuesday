@@ -1,0 +1,141 @@
+---
+title: "Tidy Tuesday 35"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, echo = FALSE}
+library(pell)
+library(bbplot)
+library(dplyr)
+library(forcats)
+library(ggplot2)
+library(gganimate)
+library(tidyr)
+
+```
+
+## Loading the dataset and some minor cleaning
+
+```{r}
+dat <- pell %>% janitor::clean_names() %>%
+  mutate(year = as.Date(ISOdate(year, 1, 1)))
+
+```
+
+## Exploring the data
+
+Some summary statistics showing per state the total number of institutions, total amount awarded, total number of recipients.
+
+```{r}
+dat %>% 
+  group_by(state) %>% 
+  summarise(inst_total = length(unique(name)), award_total = sum(award, na.rm = TRUE), recipient_total = sum(recipient)) %>% 
+  arrange(desc(award_total))
+
+top20 <- dat %>% 
+  group_by(state) %>% 
+  summarise(award_total = sum(award, na.rm = TRUE)) %>%
+  ungroup %>% 
+  arrange(desc(award_total)) %>% 
+  head(20)
+```
+
+## Growth of amount awarded over the years
+
+The amount awarded peaked in 2010 and has fallen slowly over the years since.
+
+```{r}
+windowsFonts(Helvetica = "TT Arial")
+dat %>%
+  group_by(year) %>% 
+  summarise(award_total_m = (sum(award, na.rm = TRUE) / 1000000), state = unique(state)) %>% 
+  ggplot(aes(year(year), award_total_m)) +
+  geom_line() +
+  scale_y_log10(labels = scales::label_number(suffix = "B", big.mark = ",")) +
+  labs(title = "Total amount awarded in billions of $") +
+  bbc_style()
+```
+
+```{r}
+windowsFonts(Helvetica = "TT Arial")
+dat %>%
+  group_by(year) %>% 
+  summarise(award_recipient = (sum(award, na.rm = TRUE) / sum(recipient, na.rm = TRUE))) %>% 
+  ggplot(aes(year(year), award_recipient)) +
+  geom_line() +
+  labs(title = "Average amount awarded per recipient") +
+  bbc_style()
+```
+
+
+## amount received by state
+Average amount received per institution for each state. (In terms of total amount received per state, CA stands out)
+
+The state 'FM' stands out with the highest average amount received per institution. FM is the abbreviation for Micronesia. The sole reccipient in this territory is the College of Micronesia 
+```{r}
+dat %>%
+  filter(state %in% top20$state) %>% 
+  group_by(state) %>% 
+  summarise(award_total = sum(award, na.rm = TRUE), inst_total = length(unique(name)),
+            award_inst = (award_total / inst_total) / 1000) %>% 
+  ggplot(aes(fct_reorder(state, award_inst), award_inst)) +
+  geom_col() +
+  scale_y_continuous(labels = scales::label_number(suffix = "M", big.mark = ",")) +
+  coord_flip() +
+  labs(x = "Amount awarded in million $",
+       y = "State",
+       title = "average amount per state's institution") +
+  bbc_style()
+
+
+```
+
+## Change in amount received compared to previous year
+
+```{r}
+growth <- dat %>%
+  group_by(state, year) %>% 
+  summarise(award = sum(award, na.rm = TRUE)) %>%
+  pivot_wider(names_from = year, values_from = award) %>% 
+  ungroup()
+
+for(i in 20:3) {
+  growth[,i] = growth[,i] - growth[,i - 1]
+  
+}
+growth[[2]] <- rep(0, length(growth[[2]]))
+growth <- growth %>% pivot_longer(!state, names_to = "year", values_to = "difference") %>% 
+  mutate(diff_b = difference / 1000000,
+         positive = if_else(difference > 0, TRUE, FALSE),
+         year = lubridate::year(year))
+```
+
+```{r}
+growth_plot <- growth %>%
+  filter(state %in% top20$state) %>% 
+  ggplot(aes(state, diff_b, fill = positive)) +
+  geom_col(show.legend = FALSE) +
+  coord_flip()  +
+  scale_y_continuous(labels = scales::label_number(suffix = "B", big.mark = ",")) +
+  bbc_style() +
+  transition_states(
+    year,
+    transition_length = 2,
+    state_length = 1
+  ) +
+  ggtitle("Year: {closest_state}")
+  animate(growth_plot, fps = 5)
+```
+
+
+## Top recipients for each year
+```{r}
+dat %>%
+  group_by(year) %>% filter(award == max(award, na.rm = TRUE)) %>% 
+  summarise(award = award, inst = name)
+
+```
+
