@@ -3,14 +3,17 @@ title: "Tidy Tuesday - Week 36"
 format: gfm
 
 ---
+```{r, echo = FALSE}
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
+source("../functions/ren_style.R")
+```
+
 
 ```{r, warning = FALSE, message = FALSE}
 library(Cairo)
 library(dplyr)
 library(ggplot2)
 library(readr)
-
-source("../functions/ren_style.R")
 ```
 
 

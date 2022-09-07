@@ -6,8 +6,6 @@ library(Cairo)
 library(dplyr)
 library(ggplot2)
 library(readr)
-
-source("../functions/ren_style.R")
 ```
 
 ``` r
@@ -30,7 +28,7 @@ sets %>%
   ren_style()
 ```
 
-<img src="week36_files/figure-gfm/unnamed-chunk-3-1.png"
+<img src="week36_files/figure-gfm/unnamed-chunk-4-1.png"
 data-fig-alt="Line chart of number of LEGO sets released between 1949 and 2022" />
 
 As we can see LEGO has gained immense popularity over the years. The
@@ -59,7 +57,7 @@ sets %>%
   labs(title = "Average number of components in LEGO sets")
 ```
 
-<img src="week36_files/figure-gfm/unnamed-chunk-4-1.png"
+<img src="week36_files/figure-gfm/unnamed-chunk-5-1.png"
 data-fig-alt="Line chart of average number of components in LEGO sets released between 1949 and 2022" />
 
 ``` r
@@ -75,7 +73,7 @@ sets %>%
   labs(title = "Number of components in LEGO sets")
 ```
 
-<img src="week36_files/figure-gfm/unnamed-chunk-5-1.png"
+<img src="week36_files/figure-gfm/unnamed-chunk-6-1.png"
 data-fig-alt="Line chart of average, maximum and minimum components in LEGO sets, 1949 - 2022" />
 
 This can be further clarified by looking at the distribution of the
@@ -99,7 +97,7 @@ sets %>%
   theme(legend.position = "none")
 ```
 
-<img src="week36_files/figure-gfm/unnamed-chunk-6-1.png"
+<img src="week36_files/figure-gfm/unnamed-chunk-7-1.png"
 data-fig-alt="Boxplots of distribution of number of components in LEGO sets in 1949, 1968, 186, 2004 and 2022" />
 
 ``` r
@@ -121,7 +119,7 @@ ip_sets %>%
   labs(title = "Number of sets per year for different IPs")
 ```
 
-![](week36_files/figure-gfm/unnamed-chunk-7-1.png)
+![](week36_files/figure-gfm/unnamed-chunk-8-1.png)
 
 Finally we can look at the number of LEGO sets for existing IPs such as
 Harry Potter and Star Wars. There is no clear growth in these kinds of
