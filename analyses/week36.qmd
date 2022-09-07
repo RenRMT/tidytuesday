@@ -4,13 +4,12 @@ format: gfm
 
 ---
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"))
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png"), fig.width = 10, fig.heigth = 6)
 source("../functions/ren_style.R")
 ```
 
 
 ```{r, warning = FALSE, message = FALSE}
-library(Cairo)
 library(dplyr)
 library(ggplot2)
 library(readr)

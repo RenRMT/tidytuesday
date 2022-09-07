@@ -2,7 +2,6 @@ Tidy Tuesday - Week 36
 ================
 
 ``` r
-library(Cairo)
 library(dplyr)
 library(ggplot2)
 library(readr)
